@@ -1,12 +1,4 @@
-def bmi(weight, height):
-    calculate_bmi = weight/(height ** 2)
-    if calculate_bmi <= 18.5:
-        return "Underweight"
-    elif calculate_bmi <= 25.0:
-        return "Normal"
-    elif calculate_bmi <= 30.0:
-        return "Overweight"
-    else:
-        return "Obese"
+def repeat_str(repeat, string):
+    return repeat * string
 
-print(bmi(98, 173))
+print(repeat_str(3, "FUCKK"))
