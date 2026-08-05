@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QLineEdit, QCheckBox
 from PyQt5.QtCore import Qt
 
-class toDo_List(QWidget):
+class ToDo_List(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("To-Do-List")
@@ -65,7 +65,7 @@ class toDo_List(QWidget):
                 border-radius: 20px;
                 background-color: #8a36eb;
                 padding: 14px;
-                color: black;
+                color: white;
             }
 
             QPushButton#add_task_btn:hover{
@@ -85,7 +85,7 @@ class toDo_List(QWidget):
             }
 
             QPushButton#clear_all{
-                font-family: Calibril;
+                font-family: Calibri;
                 border-radius: 20px;
                 background-color: #c92037;
                 padding: 14px;
@@ -107,6 +107,10 @@ class toDo_List(QWidget):
                 border: 3px solid #caa0fa; 
             }
 
+            QLineEdit::placeholder{
+                font-weight: light;
+            }
+
             QCheckBox{
                 font-size: 16px;
                 padding: 14px;
@@ -124,10 +128,10 @@ class toDo_List(QWidget):
         text = self.textbox.text()
 
         if text.strip(): 
-            self.checkbox = QCheckBox(text)
+            checkbox = QCheckBox(text)
             self.vbox.addWidget(self.checkbox)
             self.task_completed.append(self.checkbox)
-            self.checkbox.stateChanged.connect(self.on_check)
+            checkbox.stateChanged.connect(self.on_check)
 
         
         self.update_task_left()
@@ -173,13 +177,12 @@ class toDo_List(QWidget):
         for task in self.task_completed.copy():
             task.deleteLater()
             self.task_completed.remove(task)
-            self.tasks_left.setText("0 tasks left")
         self.update_task_left()
         self.update_dlt_btn()
             
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    todo_window = toDo_List()
+    todo_window = ToDo_List()
     todo_window.show()
     sys.exit(app.exec_())
 
