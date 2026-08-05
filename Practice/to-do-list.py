@@ -5,6 +5,8 @@ from PyQt5.QtCore import Qt
 class toDo_List(QWidget):
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("To-Do-List")
+        self.resize(500, 500)
         self.top_label = QLabel("MY TASKS", self)
         self.tasks_left = QLabel("0 tasks left", self)
         self.textbox = QLineEdit(self)
@@ -30,8 +32,93 @@ class toDo_List(QWidget):
         self.vbox.addWidget(self.add_task_btn)
         self.vbox.addWidget(self.clear_all)
         self.vbox.addWidget(self.del_btn)
+        self.vbox.setSpacing(20)
         self.del_btn.hide()
         self.setLayout(self.vbox)
+
+        self.top_label.setObjectName("top_label")
+        self.tasks_left.setObjectName("task_left")
+        self.add_task_btn.setObjectName("add_task_btn")
+        self.del_btn.setObjectName("del_btn")
+        self.clear_all.setObjectName("clear_all")
+
+        self.setStyleSheet("""
+
+            QWidget{
+                background-color: #080503;
+            }
+
+            QLabel#top_label{
+                font-family: Calibri;
+                font-weight: Bold;
+                font-size: 32px;
+            }
+
+            QLabel#task_left{
+                font-size: 16px;
+                color: grey;
+                font-family: Calibri;
+            }
+
+            QPushButton#add_task_btn{
+                font-family: Calibri;
+                border-radius: 20px;
+                background-color: #8a36eb;
+                padding: 14px;
+                color: black;
+            }
+
+            QPushButton#add_task_btn:hover{
+                background-color: #721fd1;
+            }
+
+            QPushButton#del_btn{
+                font-family: Calibri;
+                border-radius: 20px;
+                background-color: #29cc36;
+                padding: 14px;
+                color: black;
+            }
+
+            QPushButton#del_btn:hover{
+                background-color: #3ade47;
+            }
+
+            QPushButton#clear_all{
+                font-family: Calibril;
+                border-radius: 20px;
+                background-color: #c92037;
+                padding: 14px;
+                color: black;
+            }
+
+            QPushButton#clear_all:hover{
+                background-color: #d92b42;
+            }
+
+            QLineEdit{
+                padding: 14px;
+                font-size: 16px;
+                border: 3px solid grey;
+                border-radius: 20px;
+            }
+
+            QLineEdit:focus{
+                border: 3px solid #caa0fa; 
+            }
+
+            QCheckBox{
+                font-size: 16px;
+                padding: 14px;
+                color: grey;
+            }
+
+            QCheckBox:hover{
+                color: white;
+            }
+
+    
+    """)
 
     def add_task(self):
         text = self.textbox.text()
@@ -40,9 +127,10 @@ class toDo_List(QWidget):
             self.checkbox = QCheckBox(text)
             self.vbox.addWidget(self.checkbox)
             self.task_completed.append(self.checkbox)
-            self.tasks_left.setText(f"{len(self.task_completed)} tasks left")
             self.checkbox.stateChanged.connect(self.on_check)
 
+        
+        self.update_task_left()
         self.textbox.clear()
 
     def update_dlt_btn(self):
@@ -55,6 +143,12 @@ class toDo_List(QWidget):
         else:
             self.del_btn.hide()
 
+    def update_task_left(self):
+        if len(self.task_completed) == 1:
+            self.tasks_left.setText(f"{len(self.task_completed)} task left")
+        else:
+            self.tasks_left.setText(f"{len(self.task_completed)} tasks left")
+
     def on_check(self):
         checkbox = self.sender()
         font = checkbox.font()
@@ -64,6 +158,7 @@ class toDo_List(QWidget):
         else:
             font.setStrikeOut(False)
             checkbox.setFont(font)
+        self.update_task_left()
         self.update_dlt_btn()
 
     def on_click(self):
@@ -71,12 +166,15 @@ class toDo_List(QWidget):
             if task.isChecked(): 
                 task.deleteLater()
                 self.task_completed.remove(task)
+        self.update_task_left()
         self.update_dlt_btn()
 
     def clear_all_task(self):
         for task in self.task_completed.copy():
             task.deleteLater()
             self.task_completed.remove(task)
+            self.tasks_left.setText("0 tasks left")
+        self.update_task_left()
         self.update_dlt_btn()
             
 if __name__ == "__main__":
