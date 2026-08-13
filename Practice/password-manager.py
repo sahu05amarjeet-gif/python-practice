@@ -3,7 +3,7 @@ import string
 import random
 import hashlib
 import os
-file_path = "/home/amar/Amarjeet/Backup 26th Feb/Python/Practice/passwords.json"
+file_path = "Practice/passwords.json"
 with open(file_path, "r") as file:
     passwords = json.load(file)
 is_running = True
@@ -44,43 +44,90 @@ def add_password():
     print("------------------------")
     
 def view_password():
-        print("========== SAVED ACCOUNTS ==========")
-        for index, password in enumerate(passwords, start=1):
-            print(f"{index}.{password['website']}")
+        if len(passwords) == 0:
+            print("No saved password yet.")
+            return
+           
+        elif len(passwords) > 0:
+            print("========== SAVED ACCOUNTS ==========")
+            for index, password in enumerate(passwords, start=1):
+                print(f"{index}.{password['website']}")
+            try:
+                print("=============================")
+                choice = int(input("Enter account number: "))
+                if 1 <= choice <= len(passwords):
+                    index = choice - 1
+                    result = passwords[index]['website']
+                    result2 = passwords[index]['username']
+                    result3 = passwords[index]['password']
+                    print("========== ACCOUNT DETAILS ==========")
+                    print(f"Website: '{result}'")
+                    print(f"Username: '{result2}'")
+                    print(f"Password: '{result3}'")
+                    print("=====================================")
+                else:
+                    print("Invalid account number")
+            except ValueError:
+                print("Invalid choice")
 
-        print("=============================")
-        choice = int(input("Enter account number: "))
-        index = choice - 1
-        result = passwords[index]['website']
-        result2 = passwords[index]['username']
-        result3 = passwords[index]['password']
-        print("========== ACCOUNT DETAILS ==========")
-        print(f"Website: '{result}'")
-        print(f"Username: '{result2}'")
-        print(f"Password: '{result3}'")
-        print("=====================================")
 
 
 def search_password():
     print("---------------------------------------------------------------")
+    counter = 1
     found = False
+    matching_account = []
     user_ask = input("Enter the name of website you're looking for: ")
+    print("======== MATCHED RESULT ========")
     for pass_ in passwords:
         if user_ask in pass_["website"]:
-            print(f"Fetched Password: {pass_['password']}")
-            print(  "-------------------------------------------------------")
+            matching_account.append(pass_)
+            print(f"{counter}. {pass_['website']}")
+            counter += 1
             found = True
+    print("================================")
     if not found:
         print(f"'{user_ask}' doesn't exists")
+        return
+    try:
+        user_choose = int(input("Choose: "))
+        if 1 <= user_choose <= len(matching_account):
+                    search_index = user_choose - 1
+                    search_result1 = matching_account[search_index]['website']
+                    search_result2 = matching_account[search_index]['password']
+                    print("===== FOUND RESULTS =====")
+                    print(f"Website: '{search_result1}'")
+                    print(f"Passowrd: '{search_result2}'")
+                    print("=========================")
+    except ValueError:
+         print("Invalid response")
+
 def delete_password():
+    del_count = 1
+    found_del = False
+    matching_accounts_to_del = []
     ask_remove = input("Enter the name of the website you want to delete: ")
+    print("======== MATCHED RESULT ========")
     for remove_pass in passwords:
         if ask_remove in remove_pass['website']:
-            passwords.remove(remove_pass)
-            update_json()
-            print("Password removed!")
-        else:
-            print(f"'{ask_remove}' doesn't exists")
+            matching_accounts_to_del.append(remove_pass)
+            print(f"{del_count}. {remove_pass['website']}")
+            del_count += 1
+            found_del = True
+    print("================================")
+    if not found_del:
+         print("Noting found")
+         return
+    try:
+        user_choose = int(input("Choose: "))
+        if 1 <= user_choose <= len(matching_accounts_to_del):
+             choice = user_choose - 1
+             passwords.remove(matching_accounts_to_del[choice])
+             update_json()
+             print("Password removed!")
+    except ValueError:
+         print("Invalid response")
+
 
 def generate_password():
     letters = string.ascii_letters
@@ -152,7 +199,7 @@ while attempts < max_attempts and program_running:
             else:
                 attempts += 1
                 remaining = max_attempts - attempts
-                print(f"{remaining} attempt(s) left")
+                print(f"Invalid password\n{remaining} attempt(s) left")
 
             if attempts == max_attempts:
                 print("Access denied!")
