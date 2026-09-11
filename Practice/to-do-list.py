@@ -12,12 +12,10 @@ class ToDo_List(QWidget):
         self.textbox = QLineEdit(self)
         self.textbox.setPlaceholderText("Enter a new task")
         self.add_task_btn = QPushButton("Add Task", self)
-        self.del_btn =QPushButton("Delete Completed",self)
+        self.del_btn = QPushButton("Delete Completed", self)
         self.clear_all = QPushButton("Clear All", self)
         self.task_completed = []
         self.initUI()
-
-
 
     def initUI(self):
         self.add_task_btn.clicked.connect(self.add_task)
@@ -43,24 +41,25 @@ class ToDo_List(QWidget):
         self.clear_all.setObjectName("clear_all")
 
         self.setStyleSheet("""
-
-            QWidget{
+            QWidget {
                 background-color: #080503;
+                color: white;
             }
 
-            QLabel#top_label{
+            QLabel#top_label {
                 font-family: Calibri;
-                font-weight: Bold;
+                font-weight: bold;
                 font-size: 32px;
+                color: white;
             }
 
-            QLabel#task_left{
-                font-size: 16px;
+            QLabel#task_left {
+                font-size: 24px;
                 color: grey;
                 font-family: Calibri;
             }
 
-            QPushButton#add_task_btn{
+            QPushButton#add_task_btn {
                 font-family: Calibri;
                 border-radius: 20px;
                 background-color: #8a36eb;
@@ -68,11 +67,11 @@ class ToDo_List(QWidget):
                 color: white;
             }
 
-            QPushButton#add_task_btn:hover{
+            QPushButton#add_task_btn:hover {
                 background-color: #721fd1;
             }
 
-            QPushButton#del_btn{
+            QPushButton#del_btn {
                 font-family: Calibri;
                 border-radius: 20px;
                 background-color: #29cc36;
@@ -80,11 +79,11 @@ class ToDo_List(QWidget):
                 color: black;
             }
 
-            QPushButton#del_btn:hover{
+            QPushButton#del_btn:hover {
                 background-color: #3ade47;
             }
 
-            QPushButton#clear_all{
+            QPushButton#clear_all {
                 font-family: Calibri;
                 border-radius: 20px;
                 background-color: #c92037;
@@ -92,56 +91,75 @@ class ToDo_List(QWidget):
                 color: black;
             }
 
-            QPushButton#clear_all:hover{
+            QPushButton#clear_all:hover {
                 background-color: #d92b42;
             }
 
-            QLineEdit{
+            QLineEdit {
                 padding: 14px;
-                font-size: 16px;
+                font-size: 24px;
                 border: 3px solid grey;
                 border-radius: 20px;
+                color: white;
+                background-color: #080503;
             }
 
-            QLineEdit:focus{
-                border: 3px solid #caa0fa; 
+            QLineEdit:focus {
+                border: 3px solid #caa0fa;
             }
 
-            QLineEdit::placeholder{
+            QLineEdit::placeholder {
+                color: grey;
                 font-weight: light;
             }
 
-            QCheckBox{
-                font-size: 16px;
+            QCheckBox {
+                font-size: 26px;
                 padding: 14px;
                 color: grey;
             }
 
-            QCheckBox:hover{
+            QCheckBox:hover {
                 color: white;
             }
 
-    
-    """)
+            QCheckBox::indicator {
+                width: 18px;
+                height: 18px;
+            }
+
+            QCheckBox::indicator:unchecked {
+                border: 2px solid grey;
+                border-radius: 4px;
+                background-color: #080503;
+            }
+
+            QCheckBox::indicator:checked {
+                border: 2px solid #8a36eb;
+                border-radius: 4px;
+                background-color: #8a36eb;
+            }
+        """)
 
     def add_task(self):
         text = self.textbox.text()
 
         if text.strip(): 
             checkbox = QCheckBox(text)
-            self.vbox.addWidget(self.checkbox)
-            self.task_completed.append(self.checkbox)
+            self.vbox.addWidget(checkbox)
+            self.task_completed.append(checkbox)
             checkbox.stateChanged.connect(self.on_check)
 
-        
         self.update_task_left()
         self.textbox.clear()
 
     def update_dlt_btn(self):
         on_checked = False
+
         for task in self.task_completed:
             if task.isChecked():
                 on_checked = True
+
         if on_checked:
             self.del_btn.show()
         else:
@@ -156,12 +174,14 @@ class ToDo_List(QWidget):
     def on_check(self):
         checkbox = self.sender()
         font = checkbox.font()
+
         if checkbox.isChecked():
             font.setStrikeOut(True)
             checkbox.setFont(font)
         else:
             font.setStrikeOut(False)
             checkbox.setFont(font)
+
         self.update_task_left()
         self.update_dlt_btn()
 
@@ -170,6 +190,7 @@ class ToDo_List(QWidget):
             if task.isChecked(): 
                 task.deleteLater()
                 self.task_completed.remove(task)
+
         self.update_task_left()
         self.update_dlt_btn()
 
@@ -177,13 +198,13 @@ class ToDo_List(QWidget):
         for task in self.task_completed.copy():
             task.deleteLater()
             self.task_completed.remove(task)
+
         self.update_task_left()
         self.update_dlt_btn()
-            
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     todo_window = ToDo_List()
     todo_window.show()
     sys.exit(app.exec_())
-
-#If you need to remove items from a list while looping through it, don't loop directly over the list you're modifying. use copy()

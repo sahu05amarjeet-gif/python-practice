@@ -116,7 +116,7 @@ def delete_password():
             found_del = True
     print("================================")
     if not found_del:
-         print("Noting found")
+         print("Nothing found")
          return
     try:
         user_choose = int(input("Choose: "))
