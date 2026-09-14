@@ -29,16 +29,28 @@ def printSummary():
 
 userEnterFolderPath = input("Enter the folder path: ")
 new_hashes = {}
-
+while (userEnterFolderPath == ""): #Checks if the path is empty or not, if yes then again asks for the folder path
+    print("Path cannot be empty")
+    userEnterFolderPath = input("Enter the folder path: ")
 def folderScan(userEnterFolderPath):
     new_hashes = {}
     contentsOfFolder = Path(userEnterFolderPath)
-    for item in contentsOfFolder.iterdir():
+    if not Path.exists(userEnterFolderPath): #Checks for the path user enters and checks it if it exists or not
+        print(f"'{userEnterFolderPath}' doesn't exists")
+
+    if contentsOfFolder.is_file(): #Checks if the path entered is a file
+        print(f"'{userEnterFolderPath}' is not a folder")
+
+    for item in contentsOfFolder.rglob("*"): #This .rglob("*") -> will search for the files and folders in the directories and sub-dir recusively in the given path object
+        relative_path = item.relative_to(contentsOfFolder) #give me the relative path of the ITEMS which are starting from the monitored root (contentsOfFolder)
+        relativePathStr = str(relative_path)
         if item.is_file():
             with open(item, "rb") as file:
                 digest = hashlib.file_digest(file, "sha256")
                 finalHashResult = digest.hexdigest()
-                new_hashes[item.name] = finalHashResult
+                new_hashes[relativePathStr] = finalHashResult
+    if len(new_hashes) == 0: #Checks if the folder exists but it has no files
+        print(f"'{userEnterFolderPath}' contains no files")
     return new_hashes
 
 def comparison(old_hashes, new_hashes): #requires parameters because the func doesn't know what we are iterating over
@@ -49,7 +61,7 @@ def comparison(old_hashes, new_hashes): #requires parameters because the func do
                 global countModifiedFiles #to modify the variable inside the function, python will not think it as a new variable
                 countModifiedFiles+=1
             else:
-                print("File unchanged")
+                print(f"File unchanged: '{key}'")
                 global countUnchangedFiles
                 countUnchangedFiles+=1
         if key not in old_hashes:
@@ -73,8 +85,6 @@ try:
         printSummary()
     else:
         new_hashes = folderScan(userEnterFolderPath)
-        with open(filePath, "w") as file:
-            json.dump(new_hashes, file)
         print("File has been created\nPlease run the program again")
 
     update_json()
@@ -88,4 +98,4 @@ except json.JSONDecodeError:
 except NotADirectoryError:
     print("Not a folder")
 
-#Note: This program doesn't read the sub-folders inside a directory, it'll be a feature for the upcoming commits.
+#Note: This program how scans the files inside sub-folders recursively.
